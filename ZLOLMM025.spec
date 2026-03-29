@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['ZLOLMM025.py'],
+    ['ROBO_SOLICITADOR_OPS.py'],
     pathex=[],
     binaries=[],
     datas=[],
