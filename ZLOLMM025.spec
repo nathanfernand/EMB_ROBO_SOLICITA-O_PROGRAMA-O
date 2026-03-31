@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['ROBO_SOLICITADOR_OPS.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['win32com', 'win32com.client', 'openpyxl'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
