@@ -58,6 +58,35 @@ class Orchestrator:
             print(f"❌ Erro em ZLOLMM027_MTS: {e}")
             # STATUS já definido internamente por processar_zlolmm027
 
+    def _fallback_tcc_para_zlolmm027(
+        self,
+        row: pd.Series,
+        index: int,
+        data: pd.DataFrame,
+    ) -> bool:
+        """
+        Fallback específico para CARRO TCC.
+
+        Regra:
+            - Só tenta ZLOLMM027 quando o fabricante falha com
+              Status.ORDEM_NAO_SINC.
+
+        Retorna:
+            bool: True se o fallback for executado com sucesso.
+        """
+        carro = str(row.get("CARRO", "")).strip().upper()
+        status_atual = str(data.at[index, "STATUS"]).strip() if "STATUS" in data.columns else ""
+
+        if carro != "TCC":
+            return False
+
+        if status_atual != Status.ORDEM_NAO_SINC:
+            return False
+
+        print("⚠ Regra TCC acionada: tentando fallback via ZLOLMM027 após falha no FABRICANTE.")
+        self._rotear_para_zlolmm027(row, index, data)
+        return True
+
     # =========================================================================
     # FLUXO DE LOGIN
     # =========================================================================
@@ -139,10 +168,12 @@ class Orchestrator:
                                 print("✓ ZDPQPL126_FABRICANTE concluído")
                             else:
                                 print("❌ ZDPQPL126_FABRICANTE finalizado com falha")
+                                self._fallback_tcc_para_zlolmm027(row, index, data)
                         except Exception as e_fab:
                             print(f"❌ Exceção não mapeada no FABRICANTE: {e_fab}")
                             self.excel.atualizar_status(data, index, Status.ORDEM_NAO_SINC)
                             self.tx.reset_transacao()
+                            self._fallback_tcc_para_zlolmm027(row, index, data)
                             continue
                     # ----------------------------------------------------------
 

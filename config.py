@@ -131,4 +131,7 @@ CARRO_ZLOLMM027: dict[str, str] = {
     "KC2": "ZLOLMM027",
     "TCA": "ZLOLMM027",
     "KC5": "ZLOLMM027",
+    "IAD": "ZLOLMM027",
+    "IEB": "ZLOLMM027", 
+    "ILA": "ZLOLMM027",
 }
